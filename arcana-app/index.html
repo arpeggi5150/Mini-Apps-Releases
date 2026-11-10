@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arcana — Tarot</title>
+<style>
+:root{--bg:#0d0a1a;--bg2:#17112e;--card:#1e163d;--card2:#251b4d;--gold:#e8c66a;--violet:#9b7ff0;--pink:#e88bb8;--text:#f2edff;--muted:#b8add6;--line:#3a2d6b;--cloth:#5b2a86;--cloth2:#3a1a58}
+*{box-sizing:border-box}body{margin:0;font-family:Georgia,'Times New Roman',serif;background:radial-gradient(1200px 600px at 50% -10%,#2a1d5e 0%,var(--bg) 55%);color:var(--text);min-height:100vh}
+header{text-align:center;padding:28px 16px 8px}h1{margin:0;font-size:42px;letter-spacing:.04em}h1 span{color:var(--gold)}
+.sub{color:var(--muted);margin:8px 0 0;font-style:italic}
+.date-line{color:var(--gold);font-size:14px;letter-spacing:.12em;text-transform:uppercase;margin-top:10px}
+main{max-width:1020px;margin:0 auto;padding:16px 16px 48px}
+.card{background:linear-gradient(180deg,var(--card),var(--bg2));border:1px solid var(--line);border-radius:16px;padding:20px;margin:14px 0}
+h2{margin:0 0 6px;font-size:26px}h3{margin:18px 0 8px;color:var(--gold);font-size:18px}
+p{line-height:1.6;color:#e9e2ff}.muted{color:var(--muted);font-size:14px;line-height:1.5}
+.btn{background:var(--gold);color:#1a1206;border:0;border-radius:999px;padding:12px 22px;font-weight:bold;font-size:16px;cursor:pointer;font-family:inherit;margin:6px 6px 0 0}
+.btn.ghost{background:transparent;color:var(--gold);border:1px solid var(--gold)}
+.btn.sel{background:var(--violet);color:#fff;border-color:var(--violet)}
+label{display:block;font-size:14px;color:var(--muted);margin:14px 0 5px}
+.swatches{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.sw{width:36px;height:36px;border-radius:50%;border:2px solid transparent;cursor:pointer}
+.sw.sel{border-color:var(--gold);box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--gold)}
+/* the cloth: mandala with a sprout in the middle, in the chosen colour */
+.cloth{position:relative;border-radius:16px;padding:26px 16px 30px;margin-top:14px;overflow:hidden;background:radial-gradient(circle at 50% 42%,var(--cloth) 0%,var(--cloth2) 78%);border:1px solid var(--line);min-height:340px}
+.cloth::before{content:"";position:absolute;left:50%;top:42%;width:520px;height:520px;transform:translate(-50%,-50%);border-radius:50%;background:repeating-radial-gradient(circle,transparent 0 34px,rgba(255,255,255,.10) 34px 36px);pointer-events:none}
+.cloth::after{content:"";position:absolute;left:50%;top:42%;width:300px;height:300px;transform:translate(-50%,-50%);border-radius:50%;border:2px solid rgba(255,255,255,.22);pointer-events:none}
+.cloth .sprout{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);font-size:44px;opacity:.85;pointer-events:none}
+.cloth h3{position:relative;text-align:center;color:#fff;margin:0 0 4px}
+.cloth .cloth-sub{position:relative;text-align:center;color:rgba(255,255,255,.75);font-size:13px;margin:0 0 18px}
+/* cards: real tarot ratio (5:8), flip animation, slight 3D cardstock feel */
+.spread{position:relative;display:flex;flex-wrap:wrap;gap:14px;justify-content:center}
+.tcard{width:150px;height:240px;perspective:900px;cursor:pointer;position:relative;animation:deal .7s cubic-bezier(.3,.7,.3,1) backwards}
+.tcard .inner{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .7s cubic-bezier(.3,.7,.3,1)}
+@keyframes deal{from{transform:translateY(-18px) rotate(-4deg);opacity:0}to{transform:translateY(0) rotate(0);opacity:1}}
+.tcard .face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;padding:14px 10px;text-align:center;display:flex;flex-direction:column;justify-content:center}
+.tcard .front{background:linear-gradient(180deg,#2d1f63,#17112e);border:1px solid var(--gold);box-shadow:0 6px 0 rgba(0,0,0,.35),0 12px 24px rgba(0,0,0,.5)}
+.tcard .front .num{color:var(--gold);font-size:11px;letter-spacing:.14em}
+.tcard .front .tname{font-size:17px;font-weight:bold;margin:8px 0}
+.tcard .front .mean{font-size:12.5px;color:var(--muted);line-height:1.45}
+.tcard .front .pos{font-size:11px;color:var(--pink);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.tcard .back{transform:rotateY(180deg);border:1px solid var(--gold);box-shadow:0 6px 0 rgba(0,0,0,.35),0 12px 24px rgba(0,0,0,.5);align-items:center}
+.tcard .back .mark{font-size:34px}
+.tcard .back .blabel{font-size:11px;letter-spacing:.14em;color:#fff;margin-top:8px;text-transform:uppercase}
+.tcard.flipped .inner{transform:rotateY(180deg)}
+.tcard.rev .front .tname::after{content:" (Reversed)";font-size:12px;color:var(--pink)}
+.tcard.rev .front{border-color:var(--pink)}
+/* card-back skins (proper tarot ratio, CSS only so the app stays one file) */
+.skin-elements{background:radial-gradient(circle at 50% 30%,#f4d47c 0 12%,transparent 13%),linear-gradient(135deg,#7b2d8b 0%,#2a6f6f 50%,#b3541e 100%)}
+.skin-wisp{background:radial-gradient(circle at 30% 30%,#ffe9a8 0 4%,transparent 5%),radial-gradient(circle at 70% 60%,#ffe9a8 0 3%,transparent 4%),radial-gradient(circle at 50% 75%,#bfe3ff 0 3%,transparent 4%),linear-gradient(180deg,#1b2a4a,#0d1a2e)}
+.skin-sea{background:radial-gradient(circle at 50% 40%,#7fe0d4 0 10%,transparent 11%),repeating-linear-gradient(0deg,transparent 0 14px,rgba(255,255,255,.12) 14px 16px),linear-gradient(180deg,#14586b,#0a2e44)}
+/* Celtic Cross: card 2 crosses card 1 but offset, so card 1 stays visible (1.2.144 fix) */
+.cc{position:relative;display:grid;grid-template-columns:repeat(4,150px);grid-auto-rows:240px;gap:14px;justify-content:center}
+.cc .c1{grid-column:2;grid-row:2}
+.cc .c2{grid-column:2;grid-row:2;transform:translate(38px,-30px) rotate(90deg);transform-origin:center}
+.cc .c2 .inner{animation-delay:.15s}
+.cc .c3{grid-column:1;grid-row:2}
+.cc .c4{grid-column:3;grid-row:2}
+.cc .c5{grid-column:2;grid-row:1}
+.cc .c6{grid-column:2;grid-row:3}
+.cc .c7{grid-column:4;grid-row:4}
+.cc .c8{grid-column:4;grid-row:3}
+.cc .c9{grid-column:4;grid-row:2}
+.cc .c10{grid-column:4;grid-row:1}
+@media(max-width:700px){.cc{grid-template-columns:repeat(2,150px)}.cc .c1,.cc .c2,.cc .c3,.cc .c4,.cc .c5,.cc .c6,.cc .c7,.cc .c8,.cc .c9,.cc .c10{grid-column:auto;grid-row:auto;transform:none}}
+footer{text-align:center;color:var(--muted);font-size:13px;padding:0 16px 32px;line-height:1.6}
+.kv{display:grid;grid-template-columns:130px 1fr;gap:6px 12px;margin:10px 0}.kv b{color:var(--gold);font-weight:normal}
+.pill{display:inline-block;background:#2c215e;border:1px solid var(--line);border-radius:999px;padding:5px 12px;margin:3px;font-size:13px}
+</style>
+</head>
+<body>
+<header>
+<h1>✦ <span>Arcana</span> ✦</h1>
+<p class="sub">Kami Garden tarot &middot; a full 78-card deck, for reflection — not a prediction</p>
+<div class="date-line" id="todayLine"></div>
+</header>
+<main>
+<div class="card">
+<h2>What a reading means</h2>
+<p>Tarot is a way to look at a situation from a new angle. Each card is a theme — not a fortune, and not a fixed fate. Where a card lands in a spread changes what it is talking about: the same card means something different as your past, your challenge, or your outcome. A reversed card is the same theme turned inward, blocked, or still forming. Read the cards together, not one by one — the <b>overall reading</b> underneath each spread is the part that matters most, especially if you don't read tarot yourself.</p>
+<p class="muted">Kami Garden suits: South / Air = Swords, East / Fire = Wands, West / Water = Cups, North / Earth = Pentacles. Major Arcana = the big life themes. Minor Arcana = the everyday stuff — feelings, work, thoughts, and drive.</p>
+</div>
+
+<div class="card">
+<h2>Choose a spread</h2>
+<button class="btn" data-spread="one">One Card</button>
+<button class="btn ghost" data-spread="three">Three Cards — Past · Present · Future</button>
+<button class="btn ghost" data-spread="celtic">Celtic Cross — 10 cards</button>
+<button class="btn ghost" data-spread="horseshoe">Horseshoe — 7 cards</button>
+<button class="btn ghost" id="dailyBtn">Daily Card</button>
+<p class="muted" style="margin-top:12px">Tap any card to flip it over and back. Cards flip in when they are dealt — they never just appear face-up.</p>
+<label>Tablecloth — mandala with a sprout, pick a colour</label>
+<div class="swatches" id="clothSwatches"></div>
+<label>Card back — swappable skin</label>
+<div class="swatches" id="skinSwatches"></div>
+</div>
+
+<div class="cloth" id="cloth">
+<div class="sprout">🌱</div>
+<h3 id="spreadTitle">Your cloth is laid out</h3>
+<p class="cloth-sub" id="spreadSub">Pick a spread above to deal your cards onto the cloth.</p>
+<div class="spread" id="spread"></div>
+</div>
+
+<div class="card" id="readingCard" style="display:none">
+<h2>Read together — the overall reading</h2>
+<div id="readingSummary"></div>
+<div id="readingDetail"></div>
+</div>
+
+<div class="card">
+<h3>How to read it</h3>
+<p><b>One card</b> = the theme to carry today. <b>Three cards</b> = where you've been, where you are, where it's heading. <b>Celtic Cross</b> = the full picture — present, challenge, past, future, what you want, what's underneath, and where it ends. <b>Horseshoe</b> = the same arc in seven cards, a little quicker. If a card feels off, that's useful too — ask what you're resisting.</p>
+<p class="muted">For fun and reflection. Make big life calls with real information, not the cards.</p>
+</div>
+</main>
+<footer>
+Arcana v1.0.0 — Kami Garden tarot, in <b>programs/mini-apps/arcana-app/</b><br>
+Same tarot system as Kami Garden (1.2.136, fixed 1.2.144) — one-card, three-card, Celtic Cross, Horseshoe.
+</footer>
+
+<script>
+function hash(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return Math.abs(h)}
+function fmtDate(d){return d.toLocaleDateString(undefined,{weekday:'long',year:'numeric',month:'long',day:'numeric'})}
+document.getElementById('todayLine').textContent='✦ '+fmtDate(new Date())+' ✦';
+// Major Arcana — same meanings as the Astrology App's Cosmic Draw
+const MAJOR=[
+{n:'0',name:'The Fool',up:'A fresh start, leap of faith, open road.',rev:'Hesitation, a reckless step, fear of starting.'},
+{n:'I',name:'The Magician',up:'You have the tools. Focus and make it happen.',rev:'Scattered energy, untapped talent, misdirection.'},
+{n:'II',name:'The High Priestess',up:'Trust your intuition. What is hidden matters.',rev:'Ignoring your gut, secrets, inner noise.'},
+{n:'III',name:'The Empress',up:'Growth, care, abundance blooming.',rev:'Neglect — of self or of something growing.'},
+{n:'IV',name:'The Emperor',up:'Structure, boundaries, steady authority.',rev:'Rigidity, control, or a structure cracking.'},
+{n:'V',name:'The Hierophant',up:'Tradition, learning, a trusted guide.',rev:'Question the rule. Find your own way.'},
+{n:'VI',name:'The Lovers',up:'A real choice, in love or in values.',rev:'Misalignment, a choice avoided.'},
+{n:'VII',name:'The Chariot',up:'Momentum. Steer it, don’t just ride it.',rev:'Direction lost, pushing too hard.'},
+{n:'VIII',name:'Strength',up:'Quiet courage, patience with yourself.',rev:'Self-doubt, force where gentleness is needed.'},
+{n:'IX',name:'The Hermit',up:'Step back. The answer is in the quiet.',rev:'Isolation, or avoiding needed solitude.'},
+{n:'X',name:'Wheel of Fortune',up:'A turn is coming. Ride the change.',rev:'A stuck loop, resisting the turn.'},
+{n:'XI',name:'Justice',up:'Truth and balance. Fairness matters now.',rev:'An unfair call, or a truth unspoken.'},
+{n:'XII',name:'The Hanged Man',up:'Pause. A new angle changes everything.',rev:'Stalling, or a sacrifice with no point.'},
+{n:'XIII',name:'Death',up:'An ending that clears room for the new.',rev:'Clinging to what is already over.'},
+{n:'XIV',name:'Temperance',up:'Blend, balance, the middle path.',rev:'Imbalance, extremes, rushing the mix.'},
+{n:'XV',name:'The Devil',up:'A chain you can see — and can break.',rev:'Breaking free, or a habit tightening.'},
+{n:'XVI',name:'The Tower',up:'A sudden shake-up. Rebuild truer.',rev:'A crack you have been avoiding.'},
+{n:'XVII',name:'The Star',up:'Hope, healing, a clear night ahead.',rev:'Hope dimmed — rest and refill it.'},
+{n:'XVIII',name:'The Moon',up:'Dreams, confusion, what is not yet clear.',rev:'Clarity dawning, fear loosening.'},
+{n:'XIX',name:'The Sun',up:'Joy, clarity, a bright win.',rev:'Joy delayed, not denied.'},
+{n:'XX',name:'Judgement',up:'A wake-up call. Answer it honestly.',rev:'Self-judgement, or a call ignored.'},
+{n:'XXI',name:'The World',up:'Completion. A cycle closes well.',rev:'Almost there — one loose end left.'}
+];
+// Minor Arcana — standard Rider-Waite-style meanings, one line each way
+const SUITS=[
+{suit:'Cups',el:'Water',quad:'West',cards:[
+['Ace','A new feeling, a full heart, love or creativity opening up.','A feeling blocked, or a cup held back.'],
+['Two','A real partnership — two people meeting as equals.','A partnership out of balance, or a split.'],
+['Three','Friendship, celebration, people who lift you up.','A celebration missed, or a circle that feels off.'],
+['Four','Apathy — a good offer is right there, unnoticed.','Waking up to what was on offer all along.'],
+['Five','A loss that hurts. What remains still matters.','Grief loosening, starting to count what is left.'],
+['Six','Nostalgia, old joys, a kinder time remembered.','Stuck in the past, or ready to leave it behind.'],
+['Seven','Too many choices, some of them illusions.','Choices narrowing, the real one showing up.'],
+['Eight','Walking away from something that no longer fills you.','Staying too long, or afraid to leave.'],
+['Nine','A wish fulfilled, quiet satisfaction.','A wish that feels hollow, or still out of reach.'],
+['Ten','A happy home, love that lasts, family close.','A home that looks happy but feels strained.'],
+['Page','A dreamy message, a creative spark, an open heart.','A message delayed, or a dream not taken seriously.'],
+['Knight','A romantic quest, following the heart.','Moodiness, or chasing a feeling that keeps moving.'],
+['Queen','Deep compassion, care that listens first.','Care that overwhelms, or feelings running the show.'],
+['King','Calm mastery of feelings, steady and kind.','Feelings shut down, or control wearing a calm face.']]},
+{suit:'Pentacles',el:'Earth',quad:'North',cards:[
+['Ace','A real new opportunity — work, money, or a fresh start.','An opportunity missed, or a shaky foundation.'],
+['Two','Juggling well, keeping it all in the air.','Too many balls in the air, something about to drop.'],
+['Three','Good teamwork, craft, building something together.','Sloppy work, or a team pulling apart.'],
+['Four','Holding on tight — security, or fear of losing it.','Loosening the grip, or holding on too long.'],
+['Five','A hard patch — money or health feeling thin.','Help is closer than it looks; the hard patch is passing.'],
+['Six','Generosity, giving and receiving in balance.','Giving too much, or help with strings attached.'],
+['Seven','Patience — the harvest is growing, not yet ripe.','Impatience, or work that is not paying off.'],
+['Eight','Skill and diligence, mastering the craft.','Cutting corners, or effort without focus.'],
+['Nine','Independence, comfort earned, enjoying what you built.','Comfort that isolates, or independence turning lonely.'],
+['Ten','Legacy, family wealth, something that lasts.','A legacy strained, or wealth that divides.'],
+['Page','A practical student, ready to learn and earn.','A plan with no follow-through.'],
+['Knight','Steady work, slow and reliable progress.','Stuck in a rut, or progress at a crawl.'],
+['Queen','Nurturing abundance, a home that provides.','Care that smothers, or abundance hoarded.'],
+['King','Prosperous and grounded, a provider who delivers.','Stubborn about money, or success at any cost.']]},
+{suit:'Swords',el:'Air',quad:'South',cards:[
+['Ace','A clear breakthrough — the truth, sharp and useful.','Confusion, or a truth used as a weapon.'],
+['Two','A stalemate — a choice you are avoiding making.','A choice finally made, or a stalemate breaking.'],
+['Three','Heartbreak, a painful truth landing.','Healing from the hurt, slowly and for real.'],
+['Four','Rest and recovery — stop and breathe first.','Restlessness, or rest that has gone on too long.'],
+['Five','A conflict where nobody really wins.','Making peace, or a defeat that teaches.'],
+['Six','Moving on to calmer water, leaving trouble behind.','Stuck in the rough water, or afraid to move.'],
+['Seven','Strategy, or something done quietly on the side.','A plan exposed, or cleverness backfiring.'],
+['Eight','Feeling trapped — most of the trap is in the mind.','A way out is there, once you see it.'],
+['Nine','Worry at 3am, fear louder than the facts.','Fear loosening its grip, sleep coming back.'],
+['Ten','Rock bottom — an ending, and the worst is over.','The ending is still coming, or already healing.'],
+['Page','A curious truth-seeker, asking the sharp questions.','Gossip, or questions asked to wound.'],
+['Knight','Swift, direct action — charging at the problem.','Rushing in, or words used like a blade.'],
+['Queen','Clear-eyed honesty, cutting through the noise.','Honesty turned cold, or a sharp tongue.'],
+['King','Logic and authority, a fair and clear mind.','Logic used to dominate, or authority abused.']]},
+{suit:'Wands',el:'Fire',quad:'East',cards:[
+['Ace','A spark — a new venture, an idea catching fire.','A spark that fizzles, or an idea not yet ready.'],
+['Two','Planning the next move, the world opening up.','A plan with no direction, or fear of the first step.'],
+['Three','Expansion — what you started is reaching further.','Delays, or growth that stalls.'],
+['Four','Celebration, home, a milestone worth marking.','A celebration postponed, or home feeling unsettled.'],
+['Five','Rivalry and friction — energy with nowhere to go.','Friction easing, or a fight that was never worth it.'],
+['Six','Victory, recognition, a win to own.','A win that feels empty, or credit going elsewhere.'],
+['Seven','Standing your ground, holding what you earned.','Overwhelmed, or defending too much at once.'],
+['Eight','Swift movement — things finally speeding up.','Delays, or speed without direction.'],
+['Nine','Resilience — tired, still standing, nearly there.','Exhaustion, or a guard that will not come down.'],
+['Ten','A heavy load — carrying too much alone.','Putting the load down, or a burden ending.'],
+['Page','An enthusiastic explorer, a new adventure calling.','Restlessness with no outlet, or a false start.'],
+['Knight','Adventure and momentum, chasing the next thing.','Impatience, or charging off without a plan.'],
+['Queen','Confident warmth, a fire that welcomes people in.','Warmth turned demanding, or confidence slipping.'],
+['King','Bold leadership, vision carried all the way through.','Leadership turned domineering, or vision without follow-through.']]}
+];
+const DECK=[];
+MAJOR.forEach(c=>DECK.push({n:c.n,name:c.name,arcana:'Major',suit:'—',up:c.up,rev:c.rev}));
+SUITS.forEach(s=>s.cards.forEach((c,i)=>DECK.push({n:c[0],name:c[0]+' of '+s.suit,arcana:'Minor',suit:s.suit,el:s.el,quad:s.quad,up:c[1],rev:c[2]})));
+
+// Spreads — Kami Garden layouts: one, three, Celtic Cross, Horseshoe (the "maybe one more")
+const SPREADS={
+one:{title:'One Card',sub:'The theme to carry.',labels:['Your card'],cls:''},
+three:{title:'Three Cards — Past · Present · Future',sub:'Where you have been, where you are, where it is heading.',labels:['Past','Present','Future'],cls:''},
+celtic:{title:'Celtic Cross — 10 cards',sub:'The full picture. Every card is visible — the crossing card is offset, so the first card is never hidden.',labels:['Present','Challenge','Past','Future','What you want','What is underneath','Advice / You','Outside influences','Hopes & fears','Outcome'],cls:'cc'},
+horseshoe:{title:'Horseshoe — 7 cards',sub:'The same arc, a little quicker.',labels:['Past','Present','Hidden influences','Obstacle','Outside influences','Advice','Outcome'],cls:''}
+};
+const CLOTHS=[
+['Deep violet','#5b2a86','#3a1a58'],['Emerald','#1e6b4a','#123f2c'],['Rose','#8a2a52','#571a35'],
+['Teal','#176b6b','#0e4343'],['Gold','#8a6d1e','#574512'],['Crimson','#7a1f2b','#4a121b'],['Deep blue','#1e3a7a','#12234a']
+];
+const SKINS=[
+['elements','Four elements + crystal','✦','skin-elements'],
+['wisp','Wisp + fireflies','✧','skin-wisp'],
+['sea','Sea — Kami Garden','🌊','skin-sea']
+];
+let clothIdx=0, skinIdx=0;
+const clothBox=document.getElementById('cloth');
+function applyCloth(){const c=CLOTHS[clothIdx];document.documentElement.style.setProperty('--cloth',c[1]);document.documentElement.style.setProperty('--cloth2',c[2]);
+document.querySelectorAll('#clothSwatches .sw').forEach((el,i)=>el.classList.toggle('sel',i===clothIdx))}
+function applySkin(){document.querySelectorAll('#skinSwatches .sw').forEach((el,i)=>el.classList.toggle('sel',i===skinIdx))}
+document.getElementById('clothSwatches').innerHTML=CLOTHS.map((c,i)=>`<div class="sw ${i===0?'sel':''}" style="background:${c[1]}" title="${c[0]}" data-i="${i}"></div>`).join('');
+document.getElementById('skinSwatches').innerHTML=SKINS.map((s,i)=>`<div class="sw ${i===0?'sel':''}" style="background:#1b2a4a;display:flex;align-items:center;justify-content:center;font-size:18px" title="${s[1]}" data-i="${i}">${s[2]}</div>`).join('');
+document.querySelectorAll('#clothSwatches .sw').forEach(el=>el.onclick=()=>{clothIdx=+el.dataset.i;applyCloth()});
+document.querySelectorAll('#skinSwatches .sw').forEach(el=>el.onclick=()=>{skinIdx=+el.dataset.i;applySkin()});
+applyCloth();
+
+function shuffleDraw(n){
+ const deck=[...DECK];
+ for(let i=deck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]]}
+ return deck.slice(0,n).map(c=>({...c,rev:Math.random()<0.3}));
+}
+function backFace(){
+ const s=SKINS[skinIdx];
+ return `<div class="face back ${s[3]}"><div class="mark">${s[2]}</div><div class="blabel">Arcana</div></div>`;
+}
+function renderSpread(key,cards){
+ const sp=SPREADS[key];
+ document.getElementById('spreadTitle').textContent=sp.title;
+ document.getElementById('spreadSub').textContent=sp.sub;
+ const box=document.getElementById('spread');
+ box.className=sp.cls||'spread';
+ box.innerHTML=cards.map((c,i)=>{
+  const cls=key==='celtic'?'c'+(i+1):'';
+  return `<div class="tcard ${c.rev?'rev':''} ${cls}" style="animation-delay:${i*90}ms" data-i="${i}">
+   <div class="inner" style="animation-delay:${i*90}ms">
+   <div class="face front"><div class="pos">${sp.labels[i]||''}</div><div class="num">${c.arcana==='Major'?'✦ MAJOR · '+c.n:c.suit.toUpperCase()+' · '+c.n}</div><div class="tname">${c.name}</div><div class="mean">${c.rev?c.rev:c.up}</div></div>
+   ${backFace()}
+   </div></div>`;
+ }).join('');
+ // tap a card to flip it over and back
+ box.querySelectorAll('.tcard').forEach(el=>el.onclick=()=>el.classList.toggle('flipped'));
+ // deal: cards start face-down, then flip in one by one
+ box.querySelectorAll('.tcard').forEach((el,i)=>{
+  el.classList.add('flipped');
+  setTimeout(()=>el.classList.remove('flipped'),450+i*180);
+ });
+ renderReading(cards,sp);
+ document.getElementById('readingCard').style.display='block';
+ clothBox.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function renderReading(cards,sp){
+ const majors=cards.filter(c=>c.arcana==='Major').length;
+ const minors=cards.length-majors;
+ const reversed=cards.filter(c=>c.rev).length;
+ const suitCount={};
+ cards.forEach(c=>{if(c.suit!=='—')suitCount[c.suit]=(suitCount[c.suit]||0)+1});
+ const topSuit=Object.entries(suitCount).sort((a,b)=>b[1]-a[1])[0];
+ const suitInfo=topSuit?SUITS.find(s=>s.suit===topSuit[0]):null;
+ let theme;
+ if(majors>=cards.length/2) theme='This is a big-theme reading — most of the cards are Major Arcana, so it is about the shape of this chapter of your life, not just the day-to-day.';
+ else if(minors>=cards.length/2) theme='This is an everyday reading — mostly Minor Arcana, so it is about feelings, work, thoughts, and drive in the here and now.';
+ else theme='A mix of big themes and everyday cards — the big picture and the daily detail are talking to each other here.';
+ if(reversed>cards.length/2) theme+=' Most cards came up reversed, so a lot of this is turned inward, blocked, or still forming — not stopped, just not out in the open yet.';
+ else if(reversed===0) theme+=' Every card came up upright — the energy here is out in the open, moving forward.';
+ if(suitInfo) theme+=` The strongest suit is ${suitInfo.suit} (${suitInfo.el}, ${suitInfo.quad}) — that is the part of life this reading keeps coming back to.`;
+ const positions=cards.map((c,i)=>`<b>${sp.labels[i]||'Card '+(i+1)}</b> — ${c.name}${c.rev?' (Reversed)':''}: ${c.rev?c.rev:c.up}`).join('<br>');
+ document.getElementById('readingSummary').innerHTML=
+  `<p>${theme}</p><p><span class="pill">🃏 ${cards.length} cards</span> <span class="pill">✦ ${majors} Major</span> <span class="pill">◆ ${minors} Minor</span> <span class="pill">↺ ${reversed} reversed</span>${topSuit?` <span class="pill">${topSuit[0]} × ${topSuit[1]}</span>`:''}</p>
+   <p class="muted">Sit with the overall shape first — the positions below are the detail, not the verdict.</p>`;
+ document.getElementById('readingDetail').innerHTML=`<h3>Card by card</h3><p>${positions}</p>`;
+}
+document.querySelectorAll('[data-spread]').forEach(b=>b.onclick=()=>{
+ document.querySelectorAll('[data-spread]').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');
+ const key=b.dataset.spread;renderSpread(key,shuffleDraw(SPREADS[key].labels.length));
+});
+document.getElementById('dailyBtn').onclick=()=>{
+ const d=new Date().toISOString().slice(0,10);const h=hash(d+'daily-tarot');
+ const c=DECK[h%DECK.length];const rev=(h>>4)%3===0;
+ document.getElementById('spreadTitle').textContent='Your Daily Card — '+fmtDate(new Date());
+ document.getElementById('spreadSub').textContent='The same card all day, drawn from the full 78-card deck.';
+ renderSpread('one',[{...c,rev}]);
+ document.getElementById('spreadTitle').textContent='Your Daily Card — '+fmtDate(new Date());
+};
+</script>
+</body>
+</html>
