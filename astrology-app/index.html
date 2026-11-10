@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Astrology — Daily Horoscope, Birth Chart & Zodiac Signs</title>
+<style>
+:root{--bg:#0d0a1a;--bg2:#17112e;--card:#1e163d;--card2:#251b4d;--gold:#e8c66a;--violet:#9b7ff0;--pink:#e88bb8;--text:#f2edff;--muted:#b8add6;--line:#3a2d6b}
+*{box-sizing:border-box}body{margin:0;font-family:Georgia,'Times New Roman',serif;background:radial-gradient(1200px 600px at 50% -10%,#2a1d5e 0%,var(--bg) 55%);color:var(--text);min-height:100vh}
+header{text-align:center;padding:28px 16px 8px}h1{margin:0;font-size:42px;letter-spacing:.04em}h1 span{color:var(--gold)}
+.sub{color:var(--muted);margin:8px 0 0;font-style:italic}
+.date-line{color:var(--gold);font-size:14px;letter-spacing:.12em;text-transform:uppercase;margin-top:10px}
+nav{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;padding:18px 12px 4px}
+nav button{background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:999px;padding:10px 18px;font-family:inherit;font-size:15px;cursor:pointer}
+nav button.active{background:var(--gold);color:#1a1206;border-color:var(--gold);font-weight:bold}
+main{max-width:980px;margin:0 auto;padding:16px 16px 48px}
+.panel{display:none}.panel.active{display:block;animation:fade .3s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.card{background:linear-gradient(180deg,var(--card),var(--bg2));border:1px solid var(--line);border-radius:16px;padding:20px;margin:14px 0}
+h2{margin:0 0 6px;font-size:26px}h3{margin:18px 0 8px;color:var(--gold);font-size:18px}
+p{line-height:1.6;color:#e9e2ff}.muted{color:var(--muted);font-size:14px;line-height:1.5}
+.sign-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:14px}
+.sign-btn{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 10px;color:var(--text);cursor:pointer;font-family:inherit;text-align:center}
+.sign-btn:hover,.sign-btn.sel{border-color:var(--gold);background:var(--card2)}
+.sign-btn .sym{font-size:28px;display:block}.sign-btn .nm{font-weight:bold;margin-top:4px}.sign-btn .dt{font-size:12px;color:var(--muted)}
+.pill{display:inline-block;background:#2c215e;border:1px solid var(--line);border-radius:999px;padding:5px 12px;margin:3px;font-size:13px}
+.meter{height:8px;background:#2c215e;border-radius:99px;overflow:hidden;margin:6px 0 12px}.meter i{display:block;height:100%;background:linear-gradient(90deg,var(--violet),var(--gold))}
+label{display:block;font-size:14px;color:var(--muted);margin:12px 0 5px}
+input,select{width:100%;padding:11px 12px;border-radius:10px;border:1px solid var(--line);background:#120d26;color:var(--text);font-family:inherit;font-size:16px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:600px){.row{grid-template-columns:1fr}h1{font-size:32px}}
+.btn{background:var(--gold);color:#1a1206;border:0;border-radius:999px;padding:12px 22px;font-weight:bold;font-size:16px;cursor:pointer;font-family:inherit;margin-top:14px}
+.btn.ghost{background:transparent;color:var(--gold);border:1px solid var(--gold)}
+.wheel{display:flex;gap:16px;flex-wrap:wrap;align-items:center}
+.wheel svg{flex:0 0 260px;max-width:100%}
+footer{text-align:center;color:var(--muted);font-size:13px;padding:0 16px 32px;line-height:1.6}
+.kv{display:grid;grid-template-columns:130px 1fr;gap:6px 12px;margin:10px 0}.kv b{color:var(--gold);font-weight:normal}
+</style>
+</head>
+<body>
+<header>
+<h1>✦ <span>Astrology</span> ✦</h1>
+<p class="sub">Daily horoscope &middot; Birth chart &middot; Zodiac signs</p>
+<div class="date-line" id="todayLine"></div>
+</header>
+<nav>
+<button data-tab="horoscope" class="active">Daily Horoscope</button>
+<button data-tab="zodiac">Zodiac Signs</button>
+<button data-tab="chart">Birth Chart</button>
+</nav>
+<main>
+<!-- HOROSCOPE -->
+<section class="panel active" id="horoscope">
+<div class="card">
+<h2>Daily Horoscope</h2>
+<p class="muted">Pick your sign. Your reading is seeded by the date, so it changes every day and stays the same all day.</p>
+<div class="sign-grid" id="horoSigns"></div>
+<div style="margin-top:14px">
+<button class="btn ghost" id="prevDay">← Yesterday</button>
+<button class="btn ghost" id="todayBtn">Today</button>
+<button class="btn ghost" id="nextDay">Tomorrow →</button>
+<span class="muted" id="horoDateLabel" style="margin-left:10px"></span>
+</div>
+</div>
+<div class="card" id="horoResult"></div>
+</section>
+
+<!-- ZODIAC -->
+<section class="panel" id="zodiac">
+<div class="card">
+<h2>The 12 Zodiac Signs</h2>
+<p class="muted">Tap any sign for dates, element, ruler, strengths and who it clicks with.</p>
+<div class="sign-grid" id="zodiacGrid"></div>
+</div>
+<div class="card" id="zodiacDetail"><p class="muted">Pick a sign above to see its full profile.</p></div>
+</section>
+
+<!-- BIRTH CHART -->
+<section class="panel" id="chart">
+<div class="card">
+<h2>Your Birth Chart</h2>
+<p class="muted">Simplified chart — Sun, Moon and Rising, plus your element balance. This is a fun, approximate reading, not a precise ephemeris calculation. Sun is exact by date and always works. If you don't know your birth time or birth location, tick the box — you can add it later, and your chart fills in then. Until then, Rising and location-dependent parts stay incomplete, never faked.</p>
+<div class="row">
+<div><label>Birth date</label><input type="date" id="birthDate" value="1995-06-15"></div>
+<div><label>Birth time (optional, for Rising)</label><input type="time" id="birthTime" value="11:30"><label style="margin-top:8px"><input type="checkbox" id="unknownTime" style="width:auto"> I don't know my birth time</label></div>
+</div>
+<label>Your name (optional)</label>
+<input type="text" id="birthName" placeholder="e.g. Zee">
+<label>Birth location (city / place — needed for an accurate chart)</label>
+<input type="text" id="birthPlace" placeholder="e.g. Tucson, AZ">
+<label style="margin-top:8px"><input type="checkbox" id="unknownPlace" style="width:auto"> I don't know my birth location</label>
+<button class="btn" id="calcChart">Calculate my chart →</button>
+<button class="btn ghost" id="saveChart">Save this chart</button>
+<span class="muted" id="saveMsg" style="margin-left:8px"></span>
+</div>
+<div class="card" id="chartResult"><p class="muted">Enter your birth date above and hit calculate.</p></div>
+<div class="card">
+<h3>Saved Charts — <span id="savedCount">0</span> / 100</h3>
+<p class="muted">Saved on this device only (browser storage). Tap a chart to load it, ✕ to delete it. Limit is 100 charts. Loading a chart that is missing a birth time or location lets you fill it in and save — it updates that saved chart instead of adding a duplicate.</p>
+<div id="savedList"><p class="muted">No charts saved yet.</p></div>
+</div>
+</section>
+
+</main>
+<footer>
+Astrology App v1.3.0 — first mini-app in <b>programs/mini-apps/</b><br>
+Horoscopes and charts here are for fun and reflection. Make big life calls with real information, not the stars.
+</footer>
+
+<script>
+const SIGNS=[
+{id:'aries',name:'Aries',sym:'♈',dates:'Mar 21 – Apr 19',el:'Fire',mod:'Cardinal',ruler:'Mars',traits:'Bold, direct, energetic, impatient',strengths:'Courage, honesty, drive',weak:'Impatience, temper, rushing in',compat:'Leo, Sagittarius, Gemini',desc:'The Ram charges first and asks later. Aries is pure spark — new beginnings, brave moves, and the energy to start before anyone else is ready.'},
+{id:'taurus',name:'Taurus',sym:'♉',dates:'Apr 20 – May 20',el:'Earth',mod:'Fixed',ruler:'Venus',traits:'Steady, sensual, loyal, stubborn',strengths:'Patience, loyalty, taste',weak:'Stubbornness, possessiveness',compat:'Virgo, Capricorn, Cancer',desc:'The Bull builds slowly and beautifully. Taurus wants comfort that lasts — good food, good people, and a life that feels solid underfoot.'},
+{id:'gemini',name:'Gemini',sym:'♊',dates:'May 21 – Jun 20',el:'Air',mod:'Mutable',ruler:'Mercury',traits:'Curious, quick, witty, restless',strengths:'Communication, adaptability',weak:'Scattered focus, overthinking',compat:'Libra, Aquarius, Aries',desc:'The Twins live in ideas and conversation. Gemini sees both sides at once and can talk, learn, and pivot faster than anyone.'},
+{id:'cancer',name:'Cancer',sym:'♋',dates:'Jun 21 – Jul 22',el:'Water',mod:'Cardinal',ruler:'Moon',traits:'Protective, intuitive, tender, moody',strengths:'Empathy, memory, loyalty',weak:'Moodiness, holding on',compat:'Scorpio, Pisces, Taurus',desc:'The Crab guards home and heart. Cancer feels everything first — deep intuition, fierce care for the people it calls family.'},
+{id:'leo',name:'Leo',sym:'♌',dates:'Jul 23 – Aug 22',el:'Fire',mod:'Fixed',ruler:'Sun',traits:'Warm, proud, creative, dramatic',strengths:'Generosity, confidence, joy',weak:'Pride, needing the spotlight',compat:'Aries, Sagittarius, Gemini',desc:'The Lion was born to shine. Leo leads with heart and generosity — big love, big creativity, and a stage wherever it goes.'},
+{id:'virgo',name:'Virgo',sym:'♍',dates:'Aug 23 – Sep 22',el:'Earth',mod:'Mutable',ruler:'Mercury',traits:'Precise, helpful, thoughtful, critical',strengths:'Detail, service, clarity',weak:'Perfectionism, worry',compat:'Taurus, Capricorn, Cancer',desc:'The Maiden notices what everyone else misses. Virgo turns care into craft — fixing, refining, and making things actually work.'},
+{id:'libra',name:'Libra',sym:'♎',dates:'Sep 23 – Oct 22',el:'Air',mod:'Cardinal',ruler:'Venus',traits:'Fair, charming, social, indecisive',strengths:'Diplomacy, beauty, balance',weak:'Indecision, people-pleasing',compat:'Gemini, Aquarius, Leo',desc:'The Scales seek harmony and beauty. Libra sees the other side, smooths the room, and makes fairness feel elegant.'},
+{id:'scorpio',name:'Scorpio',sym:'♏',dates:'Oct 23 – Nov 21',el:'Water',mod:'Fixed',ruler:'Pluto',traits:'Intense, private, magnetic, focused',strengths:'Depth, loyalty, transformation',weak:'Jealousy, secrecy',compat:'Cancer, Pisces, Virgo',desc:'The Scorpion goes deep or not at all. Scorpio is transformation — intensity, honesty, and loyalty that does not flinch.'},
+{id:'sagittarius',name:'Sagittarius',sym:'♐',dates:'Nov 22 – Dec 21',el:'Fire',mod:'Mutable',ruler:'Jupiter',traits:'Honest, adventurous, optimistic, blunt',strengths:'Humour, vision, freedom',weak:'Bluntness, restlessness',compat:'Aries, Leo, Libra',desc:'The Archer aims far. Sagittarius wants meaning, travel, and the truth — told straight, with a laugh, on the way to somewhere new.'},
+{id:'capricorn',name:'Capricorn',sym:'♑',dates:'Dec 22 – Jan 19',el:'Earth',mod:'Cardinal',ruler:'Saturn',traits:'Ambitious, disciplined, dry-witted, reserved',strengths:'Persistence, structure, dry humour',weak:'Workaholism, rigidity',compat:'Taurus, Virgo, Scorpio',desc:'The Goat climbs steadily to the top. Capricorn builds a life brick by brick — patient, ambitious, and quietly funny about it.'},
+{id:'aquarius',name:'Aquarius',sym:'♒',dates:'Jan 20 – Feb 18',el:'Air',mod:'Fixed',ruler:'Uranus',traits:'Original, idealistic, independent, detached',strengths:'Innovation, friendship, vision',weak:'Detachment, contrariness',compat:'Gemini, Libra, Sagittarius',desc:'The Water-Bearer thinks in futures. Aquarius is the original — ideas for the whole crowd, loyalty to friends, and a mind ahead of its time.'},
+{id:'pisces',name:'Pisces',sym:'♓',dates:'Feb 19 – Mar 20',el:'Water',mod:'Mutable',ruler:'Neptune',traits:'Dreamy, compassionate, artistic, escapist',strengths:'Imagination, compassion',weak:'Boundaries, escapism',compat:'Cancer, Scorpio, Taurus',desc:'The Fish swims in dreams. Pisces feels the room, imagines whole worlds, and loves with a softness that heals.'}
+];
+const HORO_LINES={
+overview:['A small door opens today — walk through it before you overthink it.','Your usual pace works, but a shortcut is hiding in plain sight.','Something you started weeks ago quietly pays off today.','People are listening more closely than you think. Say the real thing.','Today rewards finishing, not starting. Close one loop.'],
+love:['Say the kind thing out loud. It lands better than you expect.','A honest conversation clears the air — keep it gentle.','Someone is showing care in their own quiet way. Notice it.','If you are single, a familiar face looks different today.','Make space for closeness, even if the day is busy.'],
+career:['A detail you catch today saves you work tomorrow.','Speak up in the room — your idea is better than you think.','A slow project picks up speed. Keep the momentum.','Ask for what you need at work. The answer may be yes.','Finish the thing you have been circling. It is closer than it feels.']};
+const COLORS=['Gold','Deep violet','Emerald','Rose','Teal','Copper','Silver','Crimson'];
+function hash(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return Math.abs(h)}
+function pick(arr,seed){return arr[seed%arr.length]}
+function fmtDate(d){return d.toLocaleDateString(undefined,{weekday:'long',year:'numeric',month:'long',day:'numeric'})}
+let horoOffset=0, selSign='aries';
+document.getElementById('todayLine').textContent='✦ '+fmtDate(new Date())+' ✦';
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.getElementById(b.dataset.tab).classList.add('active')});
+// sign grids
+function signBtn(s,sel){return `<button class="sign-btn ${sel===s.id?'sel':''}" data-sign="${s.id}"><span class="sym">${s.sym}</span><span class="nm">${s.name}</span><span class="dt">${s.dates}</span></button>`}
+document.getElementById('horoSigns').innerHTML=SIGNS.map(s=>signBtn(s,selSign)).join('');
+document.getElementById('zodiacGrid').innerHTML=SIGNS.map(s=>signBtn(s,null)).join('');
+document.querySelectorAll('#horoSigns .sign-btn').forEach(b=>b.onclick=()=>{selSign=b.dataset.sign;document.querySelectorAll('#horoSigns .sign-btn').forEach(x=>x.classList.toggle('sel',x.dataset.sign===selSign));renderHoro()});
+document.querySelectorAll('#zodiacGrid .sign-btn').forEach(b=>b.onclick=()=>{const s=SIGNS.find(x=>x.id===b.dataset.sign);document.getElementById('zodiacDetail').innerHTML=`<h2>${s.sym} ${s.name}</h2><p>${s.desc}</p><div class="kv"><b>Dates</b><span>${s.dates}</span><b>Element</b><span>${s.el}</span><b>Modality</b><span>${s.mod}</span><b>Ruler</b><span>${s.ruler}</span><b>Strengths</b><span>${s.strengths}</span><b>Watch out</b><span>${s.weak}</span><b>Clicks with</b><span>${s.compat}</span></div><p class="muted">${s.traits}</p>`});
+function renderHoro(){
+ const d=new Date(); d.setDate(d.getDate()+horoOffset);
+ const key=d.toISOString().slice(0,10)+selSign; const h=hash(key);
+ const s=SIGNS.find(x=>x.id===selSign);
+ const love=50+(h%45), career=50+((h>>3)%45), mood=50+((h>>5)%45);
+ document.getElementById('horoDateLabel').textContent=fmtDate(d);
+ document.getElementById('horoResult').innerHTML=`<h2>${s.sym} ${s.name} — ${horoOffset===0?'Today':horoOffset<0?'Yesterday':'Tomorrow'}</h2>
+ <p>${pick(HORO_LINES.overview,h)}</p>
+ <h3>💛 Love</h3><p>${pick(HORO_LINES.love,h+7)}</p><div class="meter"><i style="width:${love}%"></i></div>
+ <h3>💼 Career</h3><p>${pick(HORO_LINES.career,h+13)}</p><div class="meter"><i style="width:${career}%"></i></div>
+ <h3>🙂 Mood</h3><div class="meter"><i style="width:${mood}%"></i></div>
+ <p><span class="pill">🍀 Lucky number: ${(h%89)+1}</span> <span class="pill">🎨 Lucky colour: ${pick(COLORS,h+3)}</span> <span class="pill">🤝 Best match today: ${pick(SIGNS,h+11).name}</span></p>
+ <p class="muted">${s.el} sign · Ruled by ${s.ruler} · ${s.dates}</p>`;
+}
+document.getElementById('prevDay').onclick=()=>{horoOffset--;renderHoro()};
+document.getElementById('nextDay').onclick=()=>{horoOffset++;renderHoro()};
+document.getElementById('todayBtn').onclick=()=>{horoOffset=0;renderHoro()};
+renderHoro();
+// birth chart — simplified
+function sunSign(m,d){const t=[[1,20,'aquarius'],[2,19,'pisces'],[3,21,'aries'],[4,20,'taurus'],[5,21,'gemini'],[6,21,'cancer'],[7,23,'leo'],[8,23,'virgo'],[9,23,'libra'],[10,23,'scorpio'],[11,22,'sagittarius'],[12,22,'capricorn']];let cur='capricorn';for(const[mm,dd,id] of t){if(m>mm||(m===mm&&d>=dd))cur=id}return cur}
+// unknown time / location — never invent a value; parts that need them stay incomplete until added later
+document.getElementById('unknownTime').onchange=e=>{const t=document.getElementById('birthTime');t.disabled=e.target.checked;if(e.target.checked)t.value=''};
+document.getElementById('unknownPlace').onchange=e=>{const p=document.getElementById('birthPlace');p.disabled=e.target.checked;if(e.target.checked)p.value=''};
+document.getElementById('calcChart').onclick=()=>{
+ if(!window._loading){window._loadedIndex=null}
+ window._loading=false;
+ const dv=document.getElementById('birthDate').value; if(!dv){alert('Pick a birth date first.');return}
+ const [y,m,d]=dv.split('-').map(Number);
+ const sun=sunSign(m,d);
+ const sunIdx=SIGNS.findIndex(s=>s.id===sun);
+ // Moon: approx — lunar cycle 29.53d from known new moon 2000-01-06, moon moves ~12.2°/day (date only, works without time or location)
+ const days=(Date.UTC(y,m-1,d)-Date.UTC(2000,0,6))/86400000;
+ const moonLon=((days*12.2)%360+360)%360; const moon=SIGNS[Math.floor(moonLon/30)%12].id;
+ // Rising: needs birth time. Unknown time = NO Rising, never a guessed one.
+ const timeUnknown=document.getElementById('unknownTime').checked;
+ const tv=timeUnknown?null:(document.getElementById('birthTime').value||null);
+ let rising=null;
+ if(tv){const [hh,mm]=tv.split(':').map(Number);
+  const risingIdx=(((sunIdx+Math.floor(((hh+mm/60)-6+24)%24/2))%12)+12)%12;
+  rising=SIGNS[risingIdx].id;}
+ const placeUnknown=document.getElementById('unknownPlace').checked;
+ const name=document.getElementById('birthName').value||'You';
+ const place=placeUnknown?'Unknown':(document.getElementById('birthPlace').value||'—');
+ // Element balance: Sun + Moon always; Rising only when known
+ const els={};[sun,moon].concat(rising?[rising]:[]).forEach(id=>{const e=SIGNS.find(s=>s.id===id).el;els[e]=(els[e]||0)+1});
+ const S=id=>SIGNS.find(s=>s.id===id);
+ window._currentChart={name,date:dv,time:tv,place,sun,moon,rising,savedAt:new Date().toISOString()};
+ document.getElementById('saveMsg').textContent='';
+ const wheelSigns=[{id:sun,label:'Sun'},{id:moon,label:'Moon'}];
+ if(rising)wheelSigns.push({id:rising,label:'Rise'});
+ document.getElementById('chartResult').innerHTML=`<div class="wheel">
+ <svg viewBox="0 0 260 260"><circle cx="130" cy="130" r="120" fill="none" stroke="#e8c66a" stroke-width="2"/><circle cx="130" cy="130" r="78" fill="none" stroke="#3a2d6b" stroke-width="1"/>${wheelSigns.map((w,i)=>{const a=(SIGNS.findIndex(s=>s.id===w.id)/12)*Math.PI*2-Math.PI/2;const x=130+Math.cos(a)*99,y=130+Math.sin(a)*99;return `<text x="${x}" y="${y}" fill="#e8c66a" font-size="22" text-anchor="middle">${S(w.id).sym}</text><text x="${130+Math.cos(a)*58}" y="${130+Math.sin(a)*58}" fill="#f2edff" font-size="11" text-anchor="middle">${w.label}</text>`}).join('')}${rising?'':'<text x="130" y="100" fill="#b8add6" font-size="13" text-anchor="middle">Rising: ?</text>'}<text x="130" y="134" fill="#b8add6" font-size="12" text-anchor="middle">${S(sun).name}</text></svg>
+ <div style="flex:1;min-width:220px"><h2>${name}'s chart — ${fmtDate(new Date(y,m-1,d))}</h2>
+ <p class="muted">Born ${tv||'time unknown'} in ${place}</p>
+ <div class="kv"><b>☀️ Sun</b><span>${S(sun).sym} ${S(sun).name} — your core, identity and drive. ${S(sun).desc}</span>
+ <b>🌙 Moon</b><span>${S(moon).sym} ${S(moon).name} — your feelings, needs and instincts (approximate).</span>
+ <b>⬆️ Rising</b><span>${rising?S(rising).sym+' '+S(rising).name+' — how you come across, first impressions (approximate, from birth time '+tv+').':'<b>INCOMPLETE — needs your birth time.</b> Add it later and your Rising will complete. Nothing is guessed here.'}</span></div>
+ ${placeUnknown?'<p><b>📍 Birth location unknown.</b> Location-dependent parts are incomplete until you add a birth location — Sun and Moon still read fully.</p>':''}
+ <h3>Element balance</h3><p>${Object.entries(els).map(([e,c])=>`${e}: ${'●'.repeat(c)}${'○'.repeat(3-c)}`).join(' &nbsp; ')}</p>
+ <p class="muted">Simplified chart: Sun is exact by date. Moon and Rising are approximations — a full ephemeris would pin them down exactly.${rising?'':' Element balance is from Sun + Moon only — add your birth time to complete it with Rising.'}</p></div></div>`;
+};
+// saved charts — up to 100, browser storage only
+const CHART_KEY='astrologyAppCharts', CHART_MAX=100;
+function loadCharts(){try{return JSON.parse(localStorage.getItem(CHART_KEY)||'[]')}catch(e){return[]}}
+function renderSaved(){
+ const list=loadCharts();
+ document.getElementById('savedCount').textContent=list.length;
+ document.getElementById('savedList').innerHTML=list.length?list.map((c,i)=>`<p><button class="btn ghost" data-load="${i}" style="margin:2px">${c.name} — ${c.date} ${c.time||'time unknown'} · ${c.place} · ☀️ ${SIGNS.find(s=>s.id===c.sun).name}${c.rising?'':' · ⬆️ incomplete'}</button> <button class="btn ghost" data-del="${i}" title="Delete">✕</button></p>`).join(''):'<p class="muted">No charts saved yet.</p>';
+ document.querySelectorAll('[data-load]').forEach(b=>b.onclick=()=>{const c=loadCharts()[+b.dataset.load];if(!c)return;window._loadedIndex=+b.dataset.load;window._loading=true;document.getElementById('birthName').value=c.name;document.getElementById('birthDate').value=c.date;const ut=document.getElementById('unknownTime');ut.checked=!c.time;document.getElementById('birthTime').disabled=!c.time;document.getElementById('birthTime').value=c.time||'';const up=document.getElementById('unknownPlace');up.checked=(c.place==='Unknown');document.getElementById('birthPlace').disabled=(c.place==='Unknown');document.getElementById('birthPlace').value=(c.place==='—'||c.place==='Unknown')?'':c.place;document.getElementById('calcChart').click()});
+ document.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{const l=loadCharts();l.splice(+b.dataset.del,1);localStorage.setItem(CHART_KEY,JSON.stringify(l));renderSaved()});
+}
+document.getElementById('saveChart').onclick=()=>{
+ const c=window._currentChart; if(!c){document.getElementById('saveMsg').textContent='Calculate a chart first, then save it.';return}
+ const list=loadCharts();
+ // Loaded chart saved again (e.g. missing time/location filled in) updates in place — no duplicate
+ if(window._loadedIndex!=null&&list[window._loadedIndex]){list[window._loadedIndex]=c;localStorage.setItem(CHART_KEY,JSON.stringify(list));renderSaved();document.getElementById('saveMsg').textContent=`Updated saved chart! ${list.length} / 100.`;return}
+ if(list.length>=CHART_MAX){document.getElementById('saveMsg').textContent='Saved charts are full (100). Delete one to save another.';return}
+ list.push(c); localStorage.setItem(CHART_KEY,JSON.stringify(list)); renderSaved();
+ document.getElementById('saveMsg').textContent=`Saved! ${list.length} / 100.`;
+};
+renderSaved();
+</script>
+</body>
+</html>
