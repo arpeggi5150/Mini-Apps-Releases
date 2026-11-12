@@ -1,26 +1,13 @@
-# Programs — Mini-Apps
+# Mini-Apps-Releases
 
-Small standalone apps. Each one lives here in its own subfolder, and — per the systemwide rule (Zee, Nov 7 2026) — every mini-app also goes to ALL of these places: Command Center (Mini-Apps section), a public repo, linked on the Linktree, and public web access (Firebase — deferred, come back to it).
-
-## What goes here
-- Tarot games and other mini-apps — small standalone apps, NOT Kami Garden mini-games (those live in `games/mini-games/`).
-- Each mini-app is self-contained in its own subfolder so it can be launched from anywhere it is installed.
+Public releases for Zee's mini-apps — small standalone web apps. Each app lives in its own folder. Open the app's `index.html` in any browser to use it. No build step, no account, no install needed.
 
 ## Apps
-### 1. Astrology App — `astrology-app/` (BUILT v1.0.0, Nov 7 2026; now v1.3.0)
-- First mini-app. Built in the Astrology App side chat. Scope: daily horoscope, zodiac signs, birth chart (Sun exact, Moon/Rising simplified) + save up to 100 charts. **v1.3.0 Nov 9 2026: Cosmic Draw (tarot-style, 22 Major Arcana) REMOVED** — tarot lives only in Arcana now. Zee is making a "Divination Suite" with Astrology and Arcana as modules. Single self-contained `index.html`, no dependencies, plus `app-manifest.json`. Installs across all spots per the systemwide rule, including Command Center. Public repo — PUBLISHED Nov 10 2026 into Mini-Apps-Releases (v1.3.0); Linktree TBD; Firebase deferred. **Engine model (Zee, Nov 10 2026):** this app IS the astro engine — the shared chart logic + data in `astrology-app/shared/` (Vault) is the one engine; consumers are this mini-app, Kami Garden astrology via Steve, and the Divination Suite astrology module. Update the engine once, sync, all three updated; never copy it into a consumer, never a local fix. Current state: v1.3.0 of the mini-app is still self-contained and does not import `shared/` yet — the wiring is still to do. Three separate things (Zee, Nov 10 2026): the Arcana Tarot engine, the Arcana Astrology engine, and the Arcana suite itself are distinct — the suite is a shell hosting both as modules, not either engine; no suite shell built yet, and "Arcana Tarot"/"Arcana Astrology" are engine labels, not renames (tarot app stays Arcana).
 
-### 2. Arcana — `arcana-app/` (BUILT v1.0.0 as Tarot App, Nov 8 2026; RENAMED Arcana Nov 9 2026)
-- Second mini-app. The Kami Garden tarot system (built in-game 1.2.136, fixed 1.2.144) as a standalone web app: full 78-card deck (22 Major Arcana meanings reused from the Astrology App, 56 Minor Arcana), spreads One Card / Three Cards / Celtic Cross / Horseshoe / Daily Card, flip animations + 3D cardstock feel, mandala tablecloth with sprout in 7 colours, 3 swappable card-back skins, and an overall "Read together" summary for each spread. Single self-contained `index.html`, no dependencies, plus `app-manifest.json`. JS syntax-checked, deck verified 22 + 56 = 78. Home was `programs/tarot/` (empty stub, removed Nov 8) — correct home is here under `mini-apps/` per Zee Nov 8. Installs: home folder DONE, Command Center Mini-Apps via test.108 item 9 (reads this folder, never hard-coded — 108 shipped Nov 8, but the Mini-Apps entry was reported missing in CC Nov 10, cause not yet established); public repos — BOTH on every update (Zee, Nov 10 2026): `arpeggi5150/Arcana-Releases` (own repo, graduated — created Nov 10 2026, empty until the first Godot release) and `arpeggi5150/Mini-Apps-Releases` (umbrella; v1.0.0 PUBLISHED there Nov 10 2026); Linktree TBD; Firebase deferred.
+- **Astrology App v1.4.0** (`astrology-app/`) — Daily horoscope, zodiac signs, and birth chart. Save up to 100 charts on your device — yours and other people's.
+- **Arcana v1.0.0** (`arcana-app/`) — Tarot readings with the full 78-card deck.
 
-**Godot version — DECIDED Nov 8 2026 (Zee: "lets do it as godot"):** the tarot is built ONCE as a Godot game so it is the exact same full-fledged thing in the app and in Kami Garden — the standalone mini-app is the Godot Web + Windows export, Kami Garden loads the same scene as an addon. **Engine model (Zee, Nov 10 2026):** the base app IS the engine — it stays in mini-apps, and Kami Garden tarot + Arcana sync from it; update once, sync, all three updated. The Arcana suite itself (Divination Suite) is separate from the engines — it hosts them as modules, it is not one of them; no shell built yet. `arcana-app/godot/` holds the skeleton (project.godot, export presets, VERSION 1.0.0, `data/cards.json` — 78 cards, the only copy of the meanings — release workflow draft, README); `arcana-godot-build-brief-2026-11-08.md` is the paste-ready brief for Claude. The HTML v1.0.0 above stays as the lightweight fallback and the spec. Vault home for the Godot project is `programs/arcana/` (per Vault AGENTS.md); this folder is the local mirror.
+## Notes
 
-## Systemwide rule (Zee, Nov 7 2026)
-Anytime a new mini-app or mini-game is made, it goes to ALL of these places — no exceptions, no "just in CC" or "just in the folder":
-1. Its home folder here (`programs/mini-apps/`) or in `games/mini-games/`
-2. Command Center (Mini-Games under Games, Mini-Apps section)
-3. A public repo (one mini-game + one mini-app published to start — repos created Nov 10 2026: `arpeggi5150/Mini-Apps-Releases` for mini-apps, `arpeggi5150/Mini-Games-Releases` for mini-games; first publish into Mini-Apps-Releases done Nov 10 2026 — Astrology v1.3.0 + Arcana v1.0.0, verified on GitHub; Mini-Games-Releases still empty)
-4. Linked on the Linktree
-5. Public web access (Firebase or similar — DEFERRED, come back to it later)
-
-The point: every mini-app and mini-game is always easily accessible, everywhere, from the moment it is made.
+- Each app is a single self-contained web page plus a small manifest file.
+- Horoscopes, charts, and readings here are for fun and reflection.
