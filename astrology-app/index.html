@@ -77,14 +77,14 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:0 16px 32px;l
 <!-- BIRTH CHART -->
 <section class="panel" id="chart">
 <div class="card">
-<h2>Your Birth Chart</h2>
-<p class="muted">Simplified chart — Sun, Moon and Rising, plus your element balance. This is a fun, approximate reading, not a precise ephemeris calculation. Sun is exact by date and always works. If you don't know your birth time or birth location, tick the box — you can add it later, and your chart fills in then. Until then, Rising and location-dependent parts stay incomplete, never faked.</p>
+<h2>Birth Chart</h2>
+<p class="muted">Simplified chart — Sun, Moon and Rising, plus element balance. Save yours and other people's: put their name in, and their chart saves under their name. This is a fun, approximate reading, not a precise ephemeris calculation. Sun is exact by date and always works. If you don't know the birth time or birth location, tick the box — you can add it later, and the chart fills in then. Until then, Rising and location-dependent parts stay incomplete, never faked.</p>
 <div class="row">
 <div><label>Birth date</label><input type="date" id="birthDate" value="1995-06-15"></div>
 <div><label>Birth time (optional, for Rising)</label><input type="time" id="birthTime" value="11:30"><label style="margin-top:8px"><input type="checkbox" id="unknownTime" style="width:auto"> I don't know my birth time</label></div>
 </div>
-<label>Your name (optional)</label>
-<input type="text" id="birthName" placeholder="e.g. Zee">
+<label>Whose chart is this? (name — yours or someone else's)</label>
+<input type="text" id="birthName" placeholder="e.g. Zee, Dani, Mom">
 <label>Birth location (city / place — needed for an accurate chart)</label>
 <input type="text" id="birthPlace" placeholder="e.g. Tucson, AZ">
 <label style="margin-top:8px"><input type="checkbox" id="unknownPlace" style="width:auto"> I don't know my birth location</label>
@@ -94,15 +94,15 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:0 16px 32px;l
 </div>
 <div class="card" id="chartResult"><p class="muted">Enter your birth date above and hit calculate.</p></div>
 <div class="card">
-<h3>Saved Charts — <span id="savedCount">0</span> / 100</h3>
-<p class="muted">Saved on this device only (browser storage). Tap a chart to load it, ✕ to delete it. Limit is 100 charts. Loading a chart that is missing a birth time or location lets you fill it in and save — it updates that saved chart instead of adding a duplicate.</p>
+<h3>Saved Charts — yours &amp; other people's — <span id="savedCount">0</span> / 100</h3>
+<p class="muted">Saved on this device only (browser storage). Save anyone's chart — enter their birth details and their name, and it saves under their name. Tap a chart to load it, ✕ to delete it. Limit is 100 charts. Loading a chart that is missing a birth time or location lets you fill it in and save — it updates that saved chart instead of adding a duplicate.</p>
 <div id="savedList"><p class="muted">No charts saved yet.</p></div>
 </div>
 </section>
 
 </main>
 <footer>
-Astrology App v1.3.0 — first mini-app in <b>programs/mini-apps/</b><br>
+Astrology App v1.4.0 — first mini-app in <b>programs/mini-apps/</b><br>
 Horoscopes and charts here are for fun and reflection. Make big life calls with real information, not the stars.
 </footer>
 
