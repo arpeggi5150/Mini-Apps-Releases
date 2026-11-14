@@ -6,6 +6,7 @@ Public releases for Zee's mini-apps — small standalone web apps. Each app live
 
 - **Astrology App v1.4.0** (`astrology-app/`) — Daily horoscope, zodiac signs, and birth chart. Save up to 100 charts on your device — yours and other people's.
 - **Arcana v1.0.0** (`arcana-app/`) — Tarot readings with the full 78-card deck.
+- **Arcana Suite v0.1.0** (`divination-suite/`) — One home for the divination apps: opens Astrology and Arcana, with one shared profile and shared settings.
 
 ## Notes
 

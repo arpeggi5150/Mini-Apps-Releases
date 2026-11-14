@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arcana Suite</title>
+<style>
+:root{--bg:#0d0a1a;--bg2:#17112e;--card:#1e163d;--card2:#251b4d;--gold:#e8c66a;--violet:#9b7ff0;--pink:#e88bb8;--text:#f2edff;--muted:#b8add6;--line:#3a2d6b}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;font-family:Georgia,'Times New Roman',serif;background:radial-gradient(1200px 600px at 50% -10%,#2a1d5e 0%,var(--bg) 55%);background-color:var(--bg);color:var(--text);min-height:100vh}
+button,input,select{font-family:inherit}
+a{color:var(--gold)}
+.topbar{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:12px;padding:12px 16px;background:rgba(13,10,26,.92);border-bottom:1px solid var(--line);backdrop-filter:blur(6px)}
+.brand{font-size:22px;letter-spacing:.04em;white-space:nowrap;margin:0;font-weight:normal}.brand span{color:var(--gold)}
+.topbar .search{flex:1;min-width:0;max-width:420px;margin-left:auto}
+.topbar input[type=search]{width:100%;padding:9px 14px;border-radius:999px;border:1px solid var(--line);background:#120d26;color:var(--text);font-size:15px}
+.iconbtn{background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:999px;padding:9px 14px;font-size:15px;cursor:pointer;white-space:nowrap}
+.iconbtn:hover,.iconbtn:focus-visible{border-color:var(--gold)}
+main{max-width:1040px;margin:0 auto;padding:16px 16px 48px}
+.hero{text-align:center;padding:18px 0 4px}.hero h2{margin:0;font-size:36px;font-weight:normal;letter-spacing:.04em}.hero h2 span{color:var(--gold)}
+.sub{color:var(--muted);font-style:italic;margin:8px 0 0}
+.card{background:linear-gradient(180deg,var(--card),var(--bg2));border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin:14px 0}
+.profile-line{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;justify-content:space-between}
+.profile-line p{margin:0;line-height:1.5}
+.muted{color:var(--muted);font-size:14px;line-height:1.5}
+h3{color:var(--gold);font-size:18px;font-weight:normal;margin:22px 0 4px;letter-spacing:.04em}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin-top:10px}
+.tile{position:relative;display:flex;flex-direction:column;gap:6px;text-align:left;background:linear-gradient(180deg,var(--card),var(--bg2));border:1px solid var(--line);border-left:4px solid var(--accent,var(--gold));border-radius:14px;padding:16px;color:var(--text)}
+.tile .nm{font-size:19px}
+.tile .job{color:#e9e2ff;line-height:1.45;font-size:15px;flex:1}
+.tile .meta{display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:13px}
+.pill{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:3px 10px;background:#2c215e}
+.pill.live{background:var(--gold);color:#1a1206;border-color:var(--gold);font-weight:bold}
+.pill.soon{color:var(--muted)}
+.tile .act{margin-top:6px}
+.btn{background:var(--gold);color:#1a1206;border:0;border-radius:999px;padding:10px 20px;font-weight:bold;font-size:15px;cursor:pointer;text-decoration:none;display:inline-block}
+.btn.ghost{background:transparent;color:var(--gold);border:1px solid var(--gold);font-weight:normal}
+.btn.small{padding:6px 14px;font-size:14px}
+.tile.live{cursor:pointer}.tile.live:hover,.tile.live:focus-within{border-color:var(--gold);background:var(--card2)}
+.plan{font-size:14px;color:var(--muted)}
+.empty{color:var(--muted);font-style:italic;padding:8px 0}
+footer{text-align:center;color:var(--muted);font-size:13px;padding:0 16px 32px;line-height:1.6}
+/* module view */
+#moduleView{position:fixed;inset:0;z-index:10;display:none;flex-direction:column;background:var(--bg)}
+#moduleView.open{display:flex}
+.modbar{display:flex;align-items:center;gap:12px;padding:8px 12px;border-bottom:1px solid var(--line);background:#120d26}
+.modbar .title{color:var(--muted);font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.modbar .title b{color:var(--text);font-weight:normal}
+#frames{flex:1;position:relative}
+#frames iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:none;background:var(--bg)}
+#frames iframe.shown{display:block}
+/* panels */
+.overlay{position:fixed;inset:0;z-index:20;display:none;align-items:flex-start;justify-content:center;background:rgba(5,3,12,.7);padding:24px 16px;overflow:auto}
+.overlay.open{display:flex}
+.panel{width:100%;max-width:640px;background:linear-gradient(180deg,var(--card),var(--bg2));border:1px solid var(--line);border-radius:18px;padding:20px 22px}
+.panel h2{margin:0;font-weight:normal;font-size:26px}
+.panel-head{display:flex;justify-content:space-between;align-items:center;gap:12px}
+label{display:block;font-size:14px;color:var(--muted);margin:12px 0 5px}
+label.check{display:flex;gap:8px;align-items:center;color:var(--text);margin:8px 0}
+label.check input{width:auto}
+input[type=text],input[type=date],input[type=time],select{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:#120d26;color:var(--text);font-size:16px}
+input:disabled{opacity:.45}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;margin-top:4px}
+.seg button{background:transparent;color:var(--text);border:0;padding:8px 16px;cursor:pointer;font-size:15px}
+.seg button[aria-pressed=true]{background:var(--gold);color:#1a1206;font-weight:bold}
+.seg button:disabled{opacity:.4;cursor:not-allowed}
+.msg{min-height:1.4em;margin:8px 0 0;font-size:14px}.msg.err{color:#ff9db0}.msg.ok{color:var(--gold)}
+.charts{list-style:none;padding:0;margin:8px 0 0}
+.charts li{display:flex;gap:8px;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);padding:8px 0;font-size:15px}
+.charts li span{overflow:hidden;text-overflow:ellipsis}
+.scope{font-size:12px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:2px 8px;margin-left:6px;white-space:nowrap}
+fieldset{border:1px solid var(--line);border-radius:12px;padding:10px 14px 14px;margin:14px 0 0}
+legend{color:var(--gold);padding:0 6px}
+@media(max-width:600px){.row{grid-template-columns:1fr}.brand{font-size:18px}.hero h2{font-size:28px}.topbar{flex-wrap:wrap}.topbar .search{order:3;flex-basis:100%;max-width:none}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <h1 class="brand">✦ Arcana <span>Suite</span></h1>
+  <div class="search"><input type="search" id="search" placeholder="Search modules" aria-label="Search modules"></div>
+  <button class="iconbtn" id="openProfile" type="button">👤 Profile</button>
+  <button class="iconbtn" id="openSettings" type="button">⚙ Settings</button>
+</header>
+
+<main id="home">
+  <section class="hero">
+    <h2>Arcana <span>Suite</span></h2>
+    <p class="sub">One home for the divination apps. Each one is also its own full app.</p>
+  </section>
+
+  <section class="card" id="profileCard" aria-live="polite"></section>
+
+  <h3 id="liveHead">Open now</h3>
+  <div class="grid" id="liveGrid"></div>
+  <h3 id="soonHead">Coming soon</h3>
+  <div class="grid" id="soonGrid"></div>
+  <p class="empty" id="noMatch" hidden>No module matches that search.</p>
+</main>
+
+<footer>
+  <span id="suiteVersion">Arcana Suite v0.1.0</span> · Everything stays on this device. No account.<br>
+  For reflection and fun. No fate, health or medical promises.
+</footer>
+
+<section id="moduleView" aria-label="Module">
+  <div class="modbar">
+    <button class="iconbtn" id="backHome" type="button">← Suite home</button>
+    <div class="title" id="moduleTitle"></div>
+  </div>
+  <div id="frames"></div>
+</section>
+
+<div class="overlay" id="profilePanel" role="dialog" aria-modal="true" aria-labelledby="profileTitle">
+  <div class="panel">
+    <div class="panel-head"><h2 id="profileTitle">Your profile</h2><button class="iconbtn" data-close type="button">✕ Close</button></div>
+    <p class="muted">Enter it once. Astrology, Vedic, Bible, Correspondences and Numbers read it from here, so they never ask twice. Saved on this device only.</p>
+    <form id="profileForm" novalidate>
+      <label for="pName">Name</label>
+      <input type="text" id="pName" autocomplete="name" placeholder="e.g. Zee">
+      <div class="row">
+        <div><label for="pDate">Birth date</label><input type="date" id="pDate"></div>
+        <div><label for="pTime">Birth time</label><input type="time" id="pTime">
+          <label class="check"><input type="checkbox" id="pTimeUnknown"> I don't know my birth time</label></div>
+      </div>
+      <label for="pPlace">Birth place</label>
+      <input type="text" id="pPlace" placeholder="e.g. Tucson, AZ">
+      <label class="check"><input type="checkbox" id="pPlaceUnknown"> I don't know my birth place</label>
+      <div>
+        <button class="btn" type="submit">Save profile</button>
+        <button class="btn ghost" type="button" id="saveAsChart">Save as a chart</button>
+      </div>
+      <p class="msg" id="profileMsg" role="status"></p>
+    </form>
+    <fieldset>
+      <legend>Saved charts <span id="chartCount">0</span> / 100</legend>
+      <p class="muted">Yours and other people's. Put their details in above and tap "Save as a chart". Tap a chart to load it into the form.</p>
+      <ul class="charts" id="chartList"></ul>
+      <button class="btn ghost small" type="button" id="importAstro">Copy charts from the Astrology App</button>
+      <p class="msg" id="chartMsg" role="status"></p>
+    </fieldset>
+  </div>
+</div>
+
+<div class="overlay" id="settingsPanel" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+  <div class="panel">
+    <div class="panel-head"><h2 id="settingsTitle">Settings</h2><button class="iconbtn" data-close type="button">✕ Close</button></div>
+    <p class="muted">Shared across the suite. Each module keeps its own settings too, and the suite never overrides them.</p>
+    <fieldset>
+      <legend>Reading</legend>
+      <label>Reading mode</label>
+      <div class="seg" data-setting="reading"><button type="button" data-value="classical">Classical</button><button type="button" data-value="modern">Modern</button></div>
+      <p class="muted">Classical: 7 planets, 5 major aspects, whole-sign houses. Modern: 10 planets, 12 aspects, Placidus or whole-sign.</p>
+      <label>Zodiac</label>
+      <div class="seg" data-setting="zodiac"><button type="button" data-value="tropical">Tropical</button><button type="button" data-value="sidereal">Sidereal</button></div>
+      <p class="muted">Tropical is the default. Sidereal is an Astrology option (positions only). Full Vedic stays in the Vedic app.</p>
+      <label>House system</label>
+      <div class="seg" data-setting="houses"><button type="button" data-value="whole-sign">Whole-sign</button><button type="button" data-value="placidus">Placidus</button></div>
+      <p class="muted" id="housesNote"></p>
+    </fieldset>
+    <fieldset>
+      <legend>Bible <span class="scope">Bible only</span></legend>
+      <label class="check"><input type="checkbox" id="sRedLetters"> Red Letters (the words of Jesus in red)</label>
+      <label>Canons shown</label>
+      <label class="check"><input type="checkbox" data-canon="protestant"> Protestant</label>
+      <label class="check"><input type="checkbox" data-canon="catholic"> Catholic</label>
+      <label class="check"><input type="checkbox" data-canon="orthodox"> Orthodox</label>
+      <p class="muted" id="canonNote"></p>
+    </fieldset>
+    <p class="msg ok" id="settingsMsg" role="status"></p>
+  </div>
+</div>
+
+<script src="shell/suite-layout.js"></script>
+<script src="shell/suite-modules.js"></script>
+<script src="shell/suite-store.js"></script>
+<script src="shell/suite-app.js"></script>
+</body>
+</html>
